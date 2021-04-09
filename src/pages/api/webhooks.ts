@@ -23,7 +23,9 @@ export const config = {
 }
 
 const relevantEvents = new Set([
-    'checkout.session.completed'
+    'checkout.session.completed',
+    'customer.subscription.updated',
+    'customer.subscription.deleted',
 ])
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -39,30 +41,42 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return res.status(400).send(`Webhook error ${err.message}`);
         }
 
-        const { type }= event;
+        const { type } = event; ''
 
         if (relevantEvents.has(type)) {
             try {
                 switch (type) {
-                  case 'checkout.session.completed':
+                    case 'customer.subscription.updated':
+                    case 'customer.subscription.deleted':
+                        const subscription = event.data.object as Stripe.Subscription;
 
-                    const checkoutSession = event.data.object as Stripe.Checkout.Session
+                        await saveSubscription(
+                            subscription.id,
+                            subscription.customer.toString(),
+                            false
+                        );
 
-                    await saveSubscription(
-                        checkoutSession.subscription.toString(),
-                        checkoutSession.customer.toString()
-                    )
-                      break;
-                  default:
-                      throw new Error('Unhandled event.')
+                        break
+                        
+                    case 'checkout.session.completed':
+                        const checkoutSession = event.data.object as Stripe.Checkout.Session
+
+                        await saveSubscription(
+                            checkoutSession.subscription.toString(),
+                            checkoutSession.customer.toString(),
+                            true
+                        )
+                        break;
+                    default:
+                        throw new Error('Unhandled event.')
                 }
             } catch (err) {
-                return res.json({ error: 'webhook handler failed.'})
+                return res.json({ error: 'webhook handler failed.' })
             }
         }
 
         res.json({ received: true })
-    }else {
+    } else {
         res.setHeader('Allow', 'POST')
         res.status(200).end('Method not allowed')
     }
