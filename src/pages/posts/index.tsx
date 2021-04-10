@@ -1,9 +1,6 @@
-import Prismic from '@prismicio/client';
-import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import { RichText } from 'prismic-dom';
 
-import { getPrismicClient } from '../../services/prismic';
 import styles from './styles.module.scss';
 
 type Post = {
@@ -39,6 +36,7 @@ export default function Posts({ posts }: PostsProps) {
             </main>
         </>
     );
+<<<<<<< HEAD
 }
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -69,4 +67,6 @@ export const getStaticProps: GetStaticProps = async () => {
             posts
         }
     }
+=======
+>>>>>>> parent of 723fd72... feat: Consumindo API do Prismic
 }
