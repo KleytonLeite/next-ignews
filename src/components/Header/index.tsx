@@ -1,11 +1,8 @@
-import { useRouter } from 'next/router';
 import { ActiveLink }  from '../ActiveLink';
 import { SignInButton } from '../SignInButton';
 import styles from './styles.module.scss';
 
 export function Header() {
-
-    const { asPath } = useRouter()
 
     return (
         <header className={styles.headerContainer}>
@@ -15,7 +12,7 @@ export function Header() {
                     <ActiveLink activeClassName={styles.active} href="/">
                     <a>Home</a>
                     </ActiveLink>
-                    <ActiveLink activeClassName={styles.active} href="/posts" prefetch>
+                    <ActiveLink activeClassName={styles.active} href="/posts">
                     <a>Posts</a>
                     </ActiveLink>
                 </nav>
